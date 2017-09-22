@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webAjax/js/jquery-3.2.1.min.js"></script>
+    <style>
+        .name{
+            border: 1px solid grey;
+        }
+    </style>
+
+</head>
+<body>
+<div class="name">
+    <h1></h1>
+    <h2></h2>
+    <h3></h3>
+    <h4></h4>
+    <hr>
+    <p><label>状态：</label><label style="color: red" class="nameLabel"></label></p>
+</div>
+
+<button style="margin-top: 30px;display: none;" id="pay">还书</button>
+<script>
+    console.log(window.location.href)
+    $.ajax({
+        url:"http://127.0.0.1/allData/detail?id="+GetQueryString("id")+"",
+        type:'GET',
+        async:false,
+        success:function (res) {
+            console.log(res[0].book_name)
+            $(".name>h1").html(res[0].book_name)
+            $(".name>h2").html(res[0].book_address)
+            $(".name>h3").html(res[0].book_time)
+            $(".name>h4").html(res[0].book_user)
+            if(res[0].user_name){
+                $(".name .nameLabel").html("已借（"+res[0].user_name+"）")
+                $("#pay").css("display","block")
+            }else {
+                $(".name .nameLabel").html("可借");
+            }
+        },
+        error:function (error) {
+            console.log(error)
+        }
+    })
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+
+    $("#pay").click(function () {
+        $.ajax({
+            url:"http://127.0.0.1/allData/detail/pay?id="+GetQueryString("id")+"",
+            type:'GET',
+            async:false,
+            success:function (res) {
+               console.log(res)
+                if(res != 0){
+                   window.location.reload();
+                }
+            },
+            error:function (error) {
+                console.log(error)
+            }
+        })
+    })
+</script>
+</body>
+</html>

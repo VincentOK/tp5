@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webAjax/js/jquery-3.2.1.min.js"></script>
+
+</head>
+<body>
+<div>
+    <input id="adminname" type="text"placeholder="请输入管理员账号">
+    <input id="adminpassword" name="password" type="text"placeholder="请输入密码">
+    <button id="select">登录</button>
+</div>
+<script>
+    $(function () {
+        $("#select").click(function () {
+            console.log(123)
+            $.ajax({
+                url:"http://127.0.0.1/adminlogin",
+                type:'POST',
+                data:{
+                    name: $("#adminname").val(),
+                    password:$("#adminpassword").val()
+                },
+                async:false,
+                success:function (res) {
+                    console.log(res)
+                    if(res){
+                        window.location.href = '/webAjax/html/index/index.html';
+                    }else {
+                        alert("登录失败")
+                    }
+                },
+                error:function (error) {
+                    console.log(error)
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webAjax/js/jquery-3.2.1.min.js"></script>
+    <style>
+        .book{
+            border: 1px solid grey;
+            padding: 5px 0 5px 0;
+            text-align: center;
+            width: 190px;
+        }
+    </style>
+</head>
+<body>
+<div style="margin-bottom: 50px;">
+    <input type="text"placeholder="输入书名查询" class="inputWord">
+    <button id="checkBtn">查询</button>
+</div>
+<div style="">
+    <button id="add" style="margin-bottom: 20px;">新增书本</button>
+    <form id="addForm" style="display: none;margin: 20px 0px 20px 0px" method="post" action="">
+        <label>书名：</label><input type="text" name="book_name"><br>
+        <label>作者：</label><input type="text" name="book_user"><br>
+        <label>原著地址：</label><input type="text" name="book_address"><br>
+        <label>发版时间：</label><input type="date" name="book_time"><br>
+        <input type="button" style="margin-left: 60px;margin-top: 10px;" id="INp" value="提交">
+    </form>
+</div>
+
+<div class="name"></div>
+
+<script>
+    $(function () {
+        function ajax() {
+            $.ajax({
+                url:"http://127.0.0.1/allData",
+                type:'GET',
+                async:false,
+                success:function (res) {
+                    console.log(res.length)
+                    $(".name").empty();
+                    for (var i=0;i<res.length;i++){
+                        var div = $("<a href='/webAjax/html/index/detail.html?id="+res[i].book_id+"'><div class='book' data-id='"+res[i].book_id+"'>"+res[i].book_name+"</div></a>");
+                        $(".name").append(div);
+                    }
+                },
+                error:function (error) {
+                    console.log(error)
+                }
+            })
+        }
+        ajax();
+        $("#checkBtn").click(function () {
+            console.log($(".inputWord").val());
+            $.ajax({
+                url:'http://127.0.0.1/check',
+                data:{
+                    word:$(".inputWord").val(),
+                },
+                type:'POST',
+                async:false,
+                success:function (res) {
+                    console.log(res)
+                    if (res.length !=0){
+                        $(".name").empty();
+                        for (var i=0;i<res.length;i++){
+                            var div = $("<a  href='/webAjax/html/index/detail.html?id="+res[i].book_id+"'><div class='book' data-id='"+res[i].book_id+"'>"+res[i].book_name+"</div></a>");
+                            $(".name").append(div);
+                        }
+                    }else {
+                        alert("没有该书本")
+                    }
+
+                },
+                error:function (error) {
+                    alert(error);
+                }
+            })
+        })
+
+
+        $("#add").click(function () {
+            if($("#addForm").css("display") == "none"){
+                $("#addForm").css("display",'block')
+            }else {
+                $("#addForm").css("display",'none')
+            }
+        })
+
+        $("#INp").click(function () {
+
+            $.ajax({
+                type: 'post',
+                url: 'http://127.0.0.1/add',
+                data: $("#addForm").serialize(),
+                success: function(data) {
+
+                    if(data == 1){
+                        $("#addForm").css("display",'none')
+                        window.location.reload();
+                    }else {
+                        alert("新增书本失败")
+                    }
+                }
+            });
+        })
+
+
+    })
+</script>
+</body>
+</html>
